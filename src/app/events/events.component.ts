@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import * as eventList from "../../assets/EventFactoryProblemData.json";
 
 @Component({
   selector: 'app-events',
@@ -7,9 +8,10 @@ import { Component, OnInit } from '@angular/core';
 })
 export class EventsComponent implements OnInit {
 
+  events = eventList;
+
   constructor() { }
 
   ngOnInit() {
   }
-
 }
