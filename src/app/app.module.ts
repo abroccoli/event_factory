@@ -1,19 +1,20 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-
+import { MatTableModule } from '@angular/material';
 import { HttpModule } from '@angular/http';
 import { AppComponent } from './app.component';
-import { EventsComponent } from './events/events.component';
+import { EventListComponent } from './event-list/event-list.component';
 
 
 @NgModule({
   declarations: [
     AppComponent,
-    EventsComponent
+    EventListComponent
   ],
   imports: [
     BrowserModule,
-    HttpModule
+    HttpModule,
+    MatTableModule
   ],
   providers: [],
   bootstrap: [AppComponent]
