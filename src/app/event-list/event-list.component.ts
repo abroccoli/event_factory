@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatTableModule } from '@angular/material';
-import { MatTableDataSource } from '@angular/material';
+import { MatPaginator, MatTableDataSource } from '@angular/material';
 import * as eventData from "../../assets/EventFactoryProblemData.json";
 
 @Component({
@@ -13,12 +13,16 @@ export class EventListComponent implements OnInit {
   displayedColumns = ['userId', 'event', 'createdAt'];
   eventDataSource = new MatTableDataSource<Event>(eventData);
 
-  debugger
-
   constructor() {
   }
 
   ngOnInit() {
+  }
+
+  @ViewChild(MatPaginator) paginator: MatPaginator;
+
+  ngAfterViewInit() {
+    this.eventDataSource.paginator = this.paginator;
   }
 }
 
