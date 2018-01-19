@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatTableModule } from '@angular/material';
-import { MatPaginator, MatTableDataSource } from '@angular/material';
+import { MatPaginator, MatTableDataSource, MatSort } from '@angular/material';
 import * as eventData from "../../assets/EventFactoryProblemData.json";
 
 @Component({
@@ -20,14 +20,16 @@ export class EventListComponent implements OnInit {
   }
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatSort) sort: MatSort;
 
   ngAfterViewInit() {
     this.eventDataSource.paginator = this.paginator;
+    this.eventDataSource.sort = this.sort;
   }
 }
 
-export interface Event {
-  user_id: number;
-  event: string;
-  created_at: number;
-}
+// export interface Event {
+//   user_id: number;
+//   event: string;
+//   created_at: number;
+// }

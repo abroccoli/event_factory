@@ -1,24 +1,21 @@
 <div>
-  <mat-table #table [dataSource]="eventDataSource">
-
-    <!--- Note that these columns can be defined in any order.
-          The actual rendered columns are set as a property on the row definition" -->
+  <mat-table #table [dataSource]="eventDataSource" matSort>
 
     <!-- userId Column -->
     <ng-container matColumnDef="userId">
-      <mat-header-cell *matHeaderCellDef> User ID </mat-header-cell>
+      <mat-header-cell *matHeaderCellDef mat-sort-header> User ID </mat-header-cell>
       <mat-cell *matCellDef="let event"> {{event.user_id}} </mat-cell>
     </ng-container>
 
     <!-- event Column -->
     <ng-container matColumnDef="event">
-      <mat-header-cell *matHeaderCellDef> Event </mat-header-cell>
+      <mat-header-cell *matHeaderCellDef mat-sort-header> Event </mat-header-cell>
       <mat-cell *matCellDef="let event"> {{event.event}} </mat-cell>
     </ng-container>
 
     <!-- createdAt Column -->
     <ng-container matColumnDef="createdAt">
-      <mat-header-cell *matHeaderCellDef> Created At </mat-header-cell>
+      <mat-header-cell *matHeaderCellDef mat-sort-header> Created At </mat-header-cell>
       <mat-cell *matCellDef="let event"> {{event.created_at}} </mat-cell>
     </ng-container>
 
