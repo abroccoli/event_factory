@@ -13,6 +13,12 @@ export class EventListComponent implements OnInit {
   displayedColumns = ['userId', 'event', 'createdAt'];
   eventDataSource = new MatTableDataSource<Event>(eventData);
 
+  applyFilter(filterValue: string) {
+    filterValue = filterValue.trim(); // Remove whitespace
+    filterValue = filterValue.toLowerCase(); // MatTableDataSource defaults to lowercase matches
+    this.eventDataSource.filter = filterValue;
+  }
+
   constructor() {
   }
 

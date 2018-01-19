@@ -1,4 +1,7 @@
 <div>
+  <mat-form-field>
+      <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filter">
+  </mat-form-field>
   <mat-table #table [dataSource]="eventDataSource" matSort>
 
     <!-- userId Column -->
