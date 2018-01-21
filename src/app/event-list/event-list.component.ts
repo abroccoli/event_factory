@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatTableModule } from '@angular/material';
 import { MatPaginator, MatTableDataSource, MatSort } from '@angular/material';
+import { FormControl } from '@angular/forms';
 import * as eventData from "../../assets/EventFactoryProblemData.json";
 
 @Component({
@@ -14,6 +15,8 @@ export class EventListComponent implements OnInit {
 
   filterBy = 'userId';
 
+  initialDate = new FormControl(new Date(eventData[eventData.length - 1].created_at));
+
   onChange($event: MatRadioChange): void {
     this.filterBy = $event.value
   }
@@ -23,18 +26,39 @@ export class EventListComponent implements OnInit {
       filterValue = filterValue.trim(); // Remove whitespace
       filterValue = filterValue.toLowerCase(); // MatTableDataSource defaults to lowercase matches
       if (this.filterBy == 'userId'){
-        this.eventDataSource.filterPredicate = (data, filter){ return data.user_id.toString().includes(filter);}
+        this.eventDataSource.filterPredicate = (data, filter) => { return data.user_id.toString().includes(filter);}
       } else {
-        this.eventDataSource.filterPredicate = (data, filter){ return data.event.toLowerCase().includes(filter);}
+        this.eventDataSource.filterPredicate = (data, filter) => { return data.event.toLowerCase().includes(filter);}
       }
     } else if (filterCaller == 'startDateFilter'){
-        this.eventDataSource.filterPredicate = (data, filter){ return data.created_at >= filter ? true : false;}
+        this.eventDataSource.filterPredicate = (data, filter) => { return data.created_at >= filter ? true : false;}
+    } else if (filterCaller == 'endDateFilter'){
+        this.eventDataSource.filterPredicate = (data, filter) => { return data.created_at <= filter ? true : false;}
     }
     this.eventDataSource.filter = filterValue;
   }
 
   startDateChanged(event: MatDatepickerInputEvent<Date>) {
-    this.applyFilter(event.value.getTime(), 'startDateFilter');
+    this.startDate = event.value.getTime();
+  }
+
+  endDateChanged(event: MatDatepickerInputEvent<Date>) {
+    this.endDate = event.value.getTime();
+  }
+
+  startTimeChange(time){
+    let addedTime = this.stringTimeToMilliseconds(time);
+    this.applyFilter(this.startDate + addedTime, 'startDateFilter');
+  }
+
+  endTimeChange(time){
+    let addedTime = this.stringTimeToMilliseconds(time);
+    this.applyFilter(this.startDate + addedTime, 'endDateFilter');
+  }
+
+  stringTimeToMilliseconds(stringTime){
+    let timeArray = stringTime.split(':');
+    return (timeArray[0] * 3600000) + (timeArray[1] * 1000);
   }
 
   constructor() {
