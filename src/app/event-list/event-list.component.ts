@@ -18,15 +18,23 @@ export class EventListComponent implements OnInit {
     this.filterBy = $event.value
   }
 
-  applyFilter(filterValue: string) {
-    filterValue = filterValue.trim(); // Remove whitespace
-    filterValue = filterValue.toLowerCase(); // MatTableDataSource defaults to lowercase matches
-    if (this.filterBy == 'userId'){
-      this.eventDataSource.filterPredicate = (data, filter){ return data.user_id.toString().includes(filter);}
-    } else {
-      this.eventDataSource.filterPredicate = (data, filter){ return data.event.toLowerCase().includes(filter);}
+  applyFilter(filterValue: string, filterCaller: string) {
+    if(filterCaller == 'textFilter') {
+      filterValue = filterValue.trim(); // Remove whitespace
+      filterValue = filterValue.toLowerCase(); // MatTableDataSource defaults to lowercase matches
+      if (this.filterBy == 'userId'){
+        this.eventDataSource.filterPredicate = (data, filter){ return data.user_id.toString().includes(filter);}
+      } else {
+        this.eventDataSource.filterPredicate = (data, filter){ return data.event.toLowerCase().includes(filter);}
+      }
+    } else if (filterCaller == 'startDateFilter'){
+        this.eventDataSource.filterPredicate = (data, filter){ return data.created_at >= filter ? true : false;}
     }
     this.eventDataSource.filter = filterValue;
+  }
+
+  startDateChanged(event: MatDatepickerInputEvent<Date>) {
+    this.applyFilter(event.value.getTime(), 'startDateFilter');
   }
 
   constructor() {
