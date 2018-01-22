@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatTableModule } from '@angular/material';
-import { MatPaginator, MatTableDataSource, MatSort } from '@angular/material';
+import { MatPaginator, MatTableDataSource, MatSort, MatRadioChange, MatDatepickerInputEvent } from '@angular/material';
 import { FormControl } from '@angular/forms';
 import * as eventData from "../../assets/EventFactoryProblemData.json";
 
@@ -11,8 +11,16 @@ import * as eventData from "../../assets/EventFactoryProblemData.json";
 })
 export class EventListComponent implements OnInit {
   rawEventData = eventData;
+  processedEventData = [];
+  startDate = null;
+  endDate = null;
+  startTime = null;
+  endTime = null;
+  timeSelectionError = '';
   displayedColumns = ['user_id', 'event', 'created_at'];
   sequenceEventDataSource = new MatTableDataSource<Event>();
+  eventDataSource = new MatTableDataSource<Event>();
+  dateEventDataSource = new MatTableDataSource<Event>();
 
   selectedEventSequence = ['REGISTER', 'REGISTER', 'REGISTER'];
 
@@ -125,10 +133,6 @@ export class EventListComponent implements OnInit {
 
   ngOnInit() {
     this.processedEventData = []
-    this.startDate = null;
-    this.endDate = null;
-    this.startTime = null;
-    this.endTime = null;
     for (let value of this.rawEventData){
       let readableDate = (new Date(value.created_at)).toLocaleString();
       this.processedEventData.push({user_id: value.user_id, event: value.event, created_at: value.created_at, readable_date: readableDate});
@@ -154,8 +158,8 @@ export class EventListComponent implements OnInit {
   }
 }
 
-// export interface Event {
-//   user_id: number;
-//   event: string;
-//   created_at: number;
-// }
+export interface Event {
+  user_id: number;
+  event: string;
+  created_at: number;
+}
