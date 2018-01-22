@@ -133,12 +133,14 @@ export class EventListComponent implements OnInit {
 
   ngOnInit() {
     this.processedEventData = []
-    for (let value of this.rawEventData){
+    //ran into some compiler issues, this is my temporary work around
+    let arrayTypeRawData = JSON.parse(JSON.stringify(this.rawEventData));
+    for (let value of arrayTypeRawData){
       let readableDate = (new Date(value.created_at)).toLocaleString();
       this.processedEventData.push({user_id: value.user_id, event: value.event, created_at: value.created_at, readable_date: readableDate});
     }
-    this.eventDataSource = new MatTableDataSource<Event>(this.processedEventData);
-    this.dateEventDataSource = new MatTableDataSource<Event>(this.processedEventData);
+    this.eventDataSource.data = this.processedEventData;
+    this.dateEventDataSource.data = this.processedEventData;
   }
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -159,7 +161,7 @@ export class EventListComponent implements OnInit {
 }
 
 export interface Event {
-  user_id: number;
-  event: string;
-  created_at: number;
+  user_id: any;
+  event: any;
+  created_at: any;
 }
