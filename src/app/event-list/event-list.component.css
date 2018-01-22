@@ -14,8 +14,8 @@
   width: 50%;
 }
 
-.time-picker{
-  
+.error-message{
+  color: #f00;
 }
 
 .mat-table {

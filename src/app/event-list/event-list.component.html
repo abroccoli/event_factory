@@ -10,17 +10,20 @@
           <input matInput (keyup)="applyFilter($event.target.value, 'textFilter')" placeholder="Filter">
         </mat-form-field>
         <mat-form-field>
-          <input matInput [matDatepicker]="startPicker" placeholder="Start Date" (dateChange)="startDateChanged($event)" [value]="initialDate.value">
+          <input matInput [matDatepicker]="startPicker" placeholder="Start Date" (dateChange)="startDateChanged($event)">
           <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
           <mat-datepicker #startPicker></mat-datepicker>
         </mat-form-field>
         <input id="startTime" class="time-picker" type="time" (input)="startTimeChange($event.target.value)">
         <mat-form-field>
-          <input matInput [matDatepicker]="endPicker" placeholder="End Date" (dateChange)="endDateChanged($event)" [value]="initialDate.value">
+          <input matInput [matDatepicker]="endPicker" placeholder="End Date" (dateChange)="endDateChanged($event)">
           <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
           <mat-datepicker #endPicker></mat-datepicker>
         </mat-form-field>
         <input id="endTime" class="time-picker" type="time" (input)="endTimeChange($event.target.value)">
+        <p class="error-message">{{timeSelectionError}}</p>
+        <button (click)="filterByDate()" mat-button>Apply Date Filter</button>
+
       </div>
       <mat-table #table [dataSource]="eventDataSource" matSort>
 
@@ -38,8 +41,8 @@
 
         <!-- createdAt Column -->
         <ng-container matColumnDef="createdAt">
-          <mat-header-cell *matHeaderCellDef mat-sort-header> Created At </mat-header-cell>
-          <mat-cell *matCellDef="let event"> {{event.created_at}} </mat-cell>
+          <mat-header-cell *matHeaderCellDef mat-sort-header> Created </mat-header-cell>
+          <mat-cell *matCellDef="let event"> {{event.readable_date}} </mat-cell>
         </ng-container>
 
         <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>

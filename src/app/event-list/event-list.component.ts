@@ -12,20 +12,17 @@ import * as eventData from "../../assets/EventFactoryProblemData.json";
 export class EventListComponent implements OnInit {
   rawEventData = eventData;
   displayedColumns = ['userId', 'event', 'createdAt'];
-  eventDataSource = new MatTableDataSource<Event>(eventData);
   sequenceEventDataSource = new MatTableDataSource<Event>();
 
   selectedEventSequence = ['REGISTER', 'REGISTER', 'REGISTER'];
 
   filterBy = 'userId';
 
-  initialDate = new FormControl(new Date(eventData[eventData.length - 1].created_at));
-
   onChange($event: MatRadioChange): void {
     this.filterBy = $event.value
   }
 
-  applyFilter(filterValue: string, filterCaller: string) {
+  applyFilter(filterValue, filterCaller: string) {
     if(filterCaller == 'textFilter') {
       filterValue = filterValue.trim(); // Remove whitespace
       filterValue = filterValue.toLowerCase(); // MatTableDataSource defaults to lowercase matches
@@ -38,31 +35,56 @@ export class EventListComponent implements OnInit {
         this.eventDataSource.filterPredicate = (data, filter) => { return data.created_at >= filter ? true : false;}
     } else if (filterCaller == 'endDateFilter'){
         this.eventDataSource.filterPredicate = (data, filter) => { return data.created_at <= filter ? true : false;}
+    } else if (filterCaller == 'dateRangeFilter'){
+        this.eventDataSource.filterPredicate = (data, filter) => { return data.created_at >= filter[0] && data.created_at <= filter[1] ? true : false;}
     }
     this.eventDataSource.filter = filterValue;
   }
 
   startDateChanged(event: MatDatepickerInputEvent<Date>) {
-    this.startDate = event.value.getTime();
+    if (event.value){
+      this.startDate = event.value.getTime();
+    } else {
+      this.startDate = null;
+    }
   }
 
   endDateChanged(event: MatDatepickerInputEvent<Date>) {
-    this.endDate = event.value.getTime();
+    if (event.value){
+      this.endDate = event.value.getTime();
+    } else {
+      this.endDate = null;
+    }
   }
 
   startTimeChange(time){
-    let addedTime = this.stringTimeToMilliseconds(time);
-    this.applyFilter(this.startDate + addedTime, 'startDateFilter');
+    this.startTime = time;
   }
 
   endTimeChange(time){
-    let addedTime = this.stringTimeToMilliseconds(time);
-    this.applyFilter(this.startDate + addedTime, 'endDateFilter');
+    this.endTime = time;
+  }
+
+  filterByDate(){
+    this.timeSelectionError = '';
+    if (this.startDate && this.startTime && this.endDate && this.endTime ){
+      let addedStartTime = this.stringTimeToMilliseconds(this.startTime);
+      let addedEndTime = this.stringTimeToMilliseconds(this.endTime);
+      this.applyFilter([this.startDate + addedStartTime, this.endDate + addedEndTime], 'dateRangeFilter');
+    } else if (this.startDate && this.startTime){
+      let addedTime = this.stringTimeToMilliseconds(this.startTime);
+      this.applyFilter(this.startDate + addedTime, 'startDateFilter');
+    } else if (this.endDate && this.endTime){
+      let addedTime = this.stringTimeToMilliseconds(this.endTime);
+      this.applyFilter(this.endDate + addedTime, 'endDateFilter');
+    } else {
+      this.timeSelectionError = "Please ensure you have set a start date and time or end date and time"
+    }
   }
 
   stringTimeToMilliseconds(stringTime){
     let timeArray = stringTime.split(':');
-    return (timeArray[0] * 3600000) + (timeArray[1] * 1000);
+    return (timeArray[0] * 3600000) + (timeArray[1] * 60000);
   }
 
   firstSelectionChange($event: MatRadioChange): void {
@@ -98,6 +120,12 @@ export class EventListComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.processedEventData = []
+    for (let value of this.rawEventData){
+      let readableDate = (new Date(value.created_at)).toLocaleString();
+      this.processedEventData.push({user_id: value.user_id, event: value.event, created_at: value.created_at, readable_date: readableDate});
+    }
+    this.eventDataSource = new MatTableDataSource<Event>(this.processedEventData);
   }
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
