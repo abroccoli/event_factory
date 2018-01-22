@@ -10,8 +10,12 @@ import * as eventData from "../../assets/EventFactoryProblemData.json";
   styleUrls: ['./event-list.component.css']
 })
 export class EventListComponent implements OnInit {
+  rawEventData = eventData;
   displayedColumns = ['userId', 'event', 'createdAt'];
   eventDataSource = new MatTableDataSource<Event>(eventData);
+  sequenceEventDataSource = new MatTableDataSource<Event>();
+
+  selectedEventSequence = ['REGISTER', 'REGISTER', 'REGISTER'];
 
   filterBy = 'userId';
 
@@ -60,6 +64,35 @@ export class EventListComponent implements OnInit {
     let timeArray = stringTime.split(':');
     return (timeArray[0] * 3600000) + (timeArray[1] * 1000);
   }
+
+  firstSelectionChange($event: MatRadioChange): void {
+    this.selectedEventSequence[0] = $event.value
+  }
+
+  secondSelectionChange($event: MatRadioChange): void {
+    this.selectedEventSequence[1] = $event.value
+  }
+
+  thirdSelectionChange($event: MatRadioChange): void {
+    this.selectedEventSequence[2] = $event.value
+  }
+
+  applySequenceFilter(){
+    let sortedDataByTime = this.rawEventData.sort((a,b)=> a.created_at - b.created_at);
+    let foundSequences = [];
+    let indexCounter = 0;
+    for (let value of sortedDataByTime){
+      if (sortedDataByTime[indexCounter + 1] && sortedDataByTime[indexCounter + 2]){
+        if (value.event == this.selectedEventSequence[0] && sortedDataByTime[indexCounter + 1].event == this.selectedEventSequence[1] && sortedDataByTime[indexCounter + 2].event == this.selectedEventSequence[2]){
+          foundSequences.push([value, sortedDataByTime[indexCounter + 1], sortedDataByTime[indexCounter + 2]]);
+        }
+        indexCounter++;
+      }
+    }
+    debugger
+    this.sequenceEventDataSource.data = [].concat(...foundSequences);
+  }
+
 
   constructor() {
   }
