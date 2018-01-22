@@ -11,7 +11,7 @@ import * as eventData from "../../assets/EventFactoryProblemData.json";
 })
 export class EventListComponent implements OnInit {
   rawEventData = eventData;
-  displayedColumns = ['userId', 'event', 'createdAt'];
+  displayedColumns = ['user_id', 'event', 'created_at'];
   sequenceEventDataSource = new MatTableDataSource<Event>();
 
   selectedEventSequence = ['REGISTER', 'REGISTER', 'REGISTER'];
@@ -27,18 +27,23 @@ export class EventListComponent implements OnInit {
       filterValue = filterValue.trim(); // Remove whitespace
       filterValue = filterValue.toLowerCase(); // MatTableDataSource defaults to lowercase matches
       if (this.filterBy == 'userId'){
-        this.eventDataSource.filterPredicate = (data, filter) => { return data.user_id.toString().includes(filter);}
+        this.eventDataSource.filterPredicate = (data, filter) => { return data.user_id.toString().includes(filter)};
       } else {
-        this.eventDataSource.filterPredicate = (data, filter) => { return data.event.toLowerCase().includes(filter);}
+        this.eventDataSource.filterPredicate = (data, filter) => { return data.event.toLowerCase().includes(filter)};
       }
-    } else if (filterCaller == 'startDateFilter'){
-        this.eventDataSource.filterPredicate = (data, filter) => { return data.created_at >= filter ? true : false;}
-    } else if (filterCaller == 'endDateFilter'){
-        this.eventDataSource.filterPredicate = (data, filter) => { return data.created_at <= filter ? true : false;}
-    } else if (filterCaller == 'dateRangeFilter'){
-        this.eventDataSource.filterPredicate = (data, filter) => { return data.created_at >= filter[0] && data.created_at <= filter[1] ? true : false;}
     }
     this.eventDataSource.filter = filterValue;
+  }
+
+  applyDateFilter(filterValue, filterCaller: string) {
+    if (filterCaller == 'startDateFilter'){
+        this.dateEventDataSource.filterPredicate = (data, filter) => { return data.created_at >= filter ? true : false};
+    } else if (filterCaller == 'endDateFilter'){
+        this.dateEventDataSource.filterPredicate = (data, filter) => { return data.created_at <= filter ? true : false};
+    } else if (filterCaller == 'dateRangeFilter'){
+        this.dateEventDataSource.filterPredicate = (data, filter) => { return data.created_at >= filter[0] && data.created_at <= filter[1] ? true : false};
+    }
+    this.dateEventDataSource.filter = filterValue;
   }
 
   startDateChanged(event: MatDatepickerInputEvent<Date>) {
@@ -70,13 +75,13 @@ export class EventListComponent implements OnInit {
     if (this.startDate && this.startTime && this.endDate && this.endTime ){
       let addedStartTime = this.stringTimeToMilliseconds(this.startTime);
       let addedEndTime = this.stringTimeToMilliseconds(this.endTime);
-      this.applyFilter([this.startDate + addedStartTime, this.endDate + addedEndTime], 'dateRangeFilter');
+      this.applyDateFilter([this.startDate + addedStartTime, this.endDate + addedEndTime], 'dateRangeFilter');
     } else if (this.startDate && this.startTime){
       let addedTime = this.stringTimeToMilliseconds(this.startTime);
-      this.applyFilter(this.startDate + addedTime, 'startDateFilter');
+      this.applyDateFilter(this.startDate + addedTime, 'startDateFilter');
     } else if (this.endDate && this.endTime){
       let addedTime = this.stringTimeToMilliseconds(this.endTime);
-      this.applyFilter(this.endDate + addedTime, 'endDateFilter');
+      this.applyDateFilter(this.endDate + addedTime, 'endDateFilter');
     } else {
       this.timeSelectionError = "Please ensure you have set a start date and time or end date and time"
     }
@@ -100,7 +105,7 @@ export class EventListComponent implements OnInit {
   }
 
   applySequenceFilter(){
-    let sortedDataByTime = this.rawEventData.sort((a,b)=> a.created_at - b.created_at);
+    let sortedDataByTime = this.processedEventData.sort((a,b)=> a.created_at - b.created_at);
     let foundSequences = [];
     let indexCounter = 0;
     for (let value of sortedDataByTime){
@@ -111,7 +116,6 @@ export class EventListComponent implements OnInit {
         indexCounter++;
       }
     }
-    debugger
     this.sequenceEventDataSource.data = [].concat(...foundSequences);
   }
 
@@ -121,11 +125,16 @@ export class EventListComponent implements OnInit {
 
   ngOnInit() {
     this.processedEventData = []
+    this.startDate = null;
+    this.endDate = null;
+    this.startTime = null;
+    this.endTime = null;
     for (let value of this.rawEventData){
       let readableDate = (new Date(value.created_at)).toLocaleString();
       this.processedEventData.push({user_id: value.user_id, event: value.event, created_at: value.created_at, readable_date: readableDate});
     }
     this.eventDataSource = new MatTableDataSource<Event>(this.processedEventData);
+    this.dateEventDataSource = new MatTableDataSource<Event>(this.processedEventData);
   }
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -134,6 +143,14 @@ export class EventListComponent implements OnInit {
   ngAfterViewInit() {
     this.eventDataSource.paginator = this.paginator;
     this.eventDataSource.sort = this.sort;
+    this.eventDataSource.sortingDataAccessor = (data, sortHeaderId: string) => {
+      return data[sortHeaderId];
+    };
+    this.dateEventDataSource.paginator = this.paginator;
+    this.dateEventDataSource.sort = this.sort;
+    this.dateEventDataSource.sortingDataAccessor = (data, sortHeaderId: string) => {
+      return data[sortHeaderId];
+    };
   }
 }
 
