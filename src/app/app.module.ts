@@ -7,16 +7,12 @@ import { AppComponent } from './app.component';
 import { EventListComponent } from './event-list/event-list.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { OwlDateTimeModule, OwlNativeDateTimeModule } from 'ng-pick-datetime';
-import { SequenceSearchComponent } from './sequence-search/sequence-search.component';
-import { AppRoutingModule } from './app-routing.module';
-
 
 @NgModule({
   declarations: [
     AppComponent,
-    EventListComponent,
-    SequenceSearchComponent
-  ],
+    EventListComponent
+    ],
   imports: [
     BrowserModule,
     HttpModule,
@@ -33,8 +29,7 @@ import { AppRoutingModule } from './app-routing.module';
     BrowserAnimationsModule,
     FormsModule,
     OwlDateTimeModule,
-    OwlNativeDateTimeModule,
-    AppRoutingModule
+    OwlNativeDateTimeModule
   ],
   providers: [],
   bootstrap: [AppComponent]
