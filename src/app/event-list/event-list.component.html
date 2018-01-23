@@ -10,7 +10,7 @@
           <input matInput (keyup)="applyFilter($event.target.value, 'textFilter')" placeholder="Filter">
         </mat-form-field>
       </div>
-      <mat-table #eventTable [dataSource]="eventDataSource" matSort>
+      <mat-table #eventTable="matSort" [dataSource]="eventDataSource" matSort>
 
         <!-- userId Column -->
         <ng-container matColumnDef="user_id">
@@ -53,7 +53,7 @@
       <input id="endTime" class="time-picker" type="time" (input)="endTimeChange($event.target.value)">
       <p class="error-message">{{timeSelectionError}}</p>
       <button class="btn btn-primary" (click)="filterByDate()" mat-button>Apply Date Filter</button>
-      <mat-table #eventDateTable [dataSource]="dateEventDataSource" matSort>
+      <mat-table #eventDateTable="matSort" [dataSource]="dateEventDataSource" matSort>
 
         <!-- userId Column -->
         <ng-container matColumnDef="user_id">

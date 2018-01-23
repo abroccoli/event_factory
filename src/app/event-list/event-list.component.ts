@@ -146,14 +146,17 @@ export class EventListComponent implements OnInit {
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
 
+  @ViewChild('eventTable') eventTableSort: MatSort;
+  @ViewChild('eventDateTable') eventDateTableSort: MatSort;
+
   ngAfterViewInit() {
     this.eventDataSource.paginator = this.paginator;
-    this.eventDataSource.sort = this.sort;
+    this.eventDataSource.sort = this.eventTableSort;
     this.eventDataSource.sortingDataAccessor = (data, sortHeaderId: string) => {
       return data[sortHeaderId];
     };
     this.dateEventDataSource.paginator = this.paginator;
-    this.dateEventDataSource.sort = this.sort;
+    this.dateEventDataSource.sort = this.eventDateTableSort;
     this.dateEventDataSource.sortingDataAccessor = (data, sortHeaderId: string) => {
       return data[sortHeaderId];
     };
